@@ -29,7 +29,7 @@ def update():
     player.z += speed_z * time.dt
 
     #gravity
-    speed_y += -9.81 * time.dt
+#    speed_y += -9.81 * time.dt
 
     #floor
     if player.y < -3:
@@ -133,12 +133,18 @@ def input(key):
     global rotation_z
 
     #changing rotation speeds
-    if key == 'x':
+    if key == 't':
         rotation_x += 25
-    if key == 'y':
+    if key == 'g':
         rotation_y += 25
-    if key == 'z':
+    if key == 'b':
         rotation_z += 25
+    if key == 'y':
+        rotation_x -= 27
+    if key == 'h':
+        rotation_y -= 27
+    if key == 'n':
+        rotation_z -= 27
     if key == '1':
         speed_x = 0
         speed_y = 0
@@ -163,8 +169,13 @@ def input(key):
         rotation_x = rand.random()*1000
         rotation_y = rand.random()*1000
         rotation_z = rand.random()*1000
-        speed_y = 20
+#        speed_y = 20
 
+    #stop everything
+    if key == 'p':
+        rotation_x = 0
+        rotation_y = 0
+        rotation_z = 0
 
     #ToDo ursina keeps closing poorly
     if key == 'escape':
