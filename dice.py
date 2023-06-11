@@ -133,21 +133,25 @@ class d6(Entity):
 class d4(Entity):
     def __init__(self, **kwargs):
         super().__init__(self, **kwargs)
-
-        self.verts = ((1,0,0),(-1/2,0,sqrt(3)/2),(-1/2,0,-sqrt(3)/2),(0,sqrt(3+sqrt(3)),0))
-        self.tris = (0,1,2,0,2,3,0,1,3,1,2,3)
-        self.colors = (color.random_color(), color.random_color(), color.random_color(), color.random_color())
+        #Build the d4 shape
+        self.verts = ((1,1,1), (1,-1,-1), (-1,1,-1), (-1,-1,1))
+        self.tris = (0, 1, 2, 1, 2, 3, 0, 2, 3, 0, 1, 3,
+                        3, 1, 0, 3, 2, 0, 3, 2, 1, 2, 1, 3,
+                        1, 3, 2, 2, 3, 1, 1, 0, 2, 2, 0, 3)
 
         # TODO:  What are these?
         self.uvs = ((1,0), (0,1), (0,0), (1,1))
-        self.norms = ((0,0,-1),)*len(self.verts)
+        self.norms = ((0, 0, -1),)*len(self.verts)
 
+        #assigning colors to the corners?
+        self.colors = (color.red, color.blue, color.lime, color.black)
+
+        #constructing the model
         self.model = Mesh(vertices = self.verts, triangles = self.tris, uvs = self.uvs,
                             normals = self.norms, colors = self.colors)
 
         self.texture = "white_cube"
         self.collider = 'box'
-        #self.rgb = (0,255,0)
         self.rolling = False
         self.rolling_speed = 20
         self.omega_x = 0
@@ -190,8 +194,8 @@ class d4(Entity):
         #floor
         if self.y < -3:
             self.y = -3
-            #Impact on the floor
 
+            #Impact on the floor
             impact = abs(self.speed_y - (self.speed_y * self.rebound))
 
             #reaction based on the impact of the floor
@@ -245,7 +249,7 @@ class d4(Entity):
 
     def input(self, key):
         #roll the die
-        if key == "space":
+        if key == "r":
             self.roll()
             print(self.colors)
         #toggle pause function
@@ -258,9 +262,52 @@ d = d4()
 floor = Entity(model = "plane", position = (0,-4,0), scale = (100,.1,100), color = color.rgb(25,165,25), texture= 'grass', collider = 'mesh')
 Sky()
 print(color.random_color)
+
+#Camera when rolling
+"""
 camera.position = (0,5,-55)
 
 def update():
     camera.look_at(d)
+
+"""
+
+
+"""
+    Extra testing code
+"""
+verts = ((0,0,0), (1,0,0), (.5, 1, 0), (-.5,1,0))
+tris = (1, 2, 0, 2, 3, 0)
+uvs = ((1.0, 0.0), (0.0, 1.0), (0.0, 0.0), (1.0, 1.0))
+norms = ((0,0,-1),) * len(verts)
+colors = (color.red, color.blue, color.lime, color.black)
+
+
+e = Entity(model=Mesh(vertices=verts, triangles=tris, uvs=uvs, normals=norms, colors=colors), scale=2)
+verts = (Vec3(0,0,0), Vec3(0,1,0), Vec3(1,1,0), Vec3(2,2,0), Vec3(0,3,0), Vec3(-2,3,0))
+tris = ((0,1), (3,4,5))
+
+lines = Entity(model=Mesh(vertices=verts, triangles=tris, mode='line', thickness=4), color=color.cyan, z=-1)
+points = Entity(model=Mesh(vertices=verts, mode='point', thickness=.05), color=color.red, z=-1.01)
+
+
+"""
+    testing code end
+"""
+
+player = FirstPersonController(y=1, enabled=True)
+
+ec = EditorCamera()
+ec.enabled = False
+rotation_info = Text(position=window.top_left)
+
+def update():
+    rotation_info.text = str(int(ec.rotation_y)) + '\n' + str(int(ec.rotation_x))
+
+
+def input(key):
+    if key == 'tab':    # press tab to toggle edit/play mode
+        ec.enabled = not ec.enabled
+        player.enabled = not player.enabled
 
 app.run()
