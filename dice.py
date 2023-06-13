@@ -1,6 +1,7 @@
 from ursina import *
 import random as rand
 from ursina.prefabs.first_person_controller import FirstPersonController
+import numpy as np
 
 """
  TODO:
@@ -38,7 +39,6 @@ class d6(Entity):
         self.rebound = .75
         self.pause = False
         self.floor = False
-
 
     def roll(self):
         self.omega_x = rand.random()*1000
@@ -163,7 +163,7 @@ class d4(Entity):
         self.rebound = .75
         self.pause = False
         self.floor = False
-
+        self.diff = 1
 
     def roll(self):
         self.omega_x = rand.random()*1000
@@ -171,7 +171,7 @@ class d4(Entity):
         self.omega_z = rand.random()*1000
         self.speed_y = self.rolling_speed
         self.floor = False
-
+        print(self.norms)
 
     def motion(self):
         #rotation speed
@@ -200,7 +200,7 @@ class d4(Entity):
 
             #reaction based on the impact of the floor
             #Here it is becoming static
-            if impact < .35:
+            if self.diff < .001 and not self.floor:
                 self.omega_x = 0
                 self.omega_y = 0
                 self.omega_z = 0
@@ -208,8 +208,39 @@ class d4(Entity):
                 self.floor = True
 
             #Here it is nestling
-            elif impact < .9:
+            elif impact < 1:
                 self.speed_y = -self.rebound * self.speed_y
+
+                cur = np.array([self.rotation_x, self.rotation_y, self.rotation_z])
+
+                #possible landing positions
+                settle = np.array([315, 315, 315])
+                f2 = np.array([315, 45, 45])
+                f3 = np.array([45, 315, 45])
+                f4 = np.array([45, 45, 315])
+
+                if np.linalg.norm(settle - cur) > np.linalg.norm(f2 - cur):
+                    settle = f2
+                if np.linalg.norm(settle - cur) > np.linalg.norm(f3 - cur):
+                    settle = f3
+                if np.linalg.norm(settle - cur) > np.linalg.norm(f4 - cur):
+                    settle = f4
+
+                self.omega_x = settle[0] - self.rotation_x
+                self.omega_y = settle[1] - self.rotation_y
+                self.omega_z = settle[2] - self.rotation_z
+                dif = np.linalg.norm(settle-cur)
+                print("target: " + str(settle))
+                print("currrent: " + str(cur))
+
+
+
+                """
+                vertices
+                self.verts = ((1,1,1), (1,-1,-1), (-1,1,-1), (-1,-1,1))
+
+                This code is for d6
+
 
                 X = self.rotation_x + 45
                 Y = self.rotation_y + 45
@@ -222,15 +253,16 @@ class d4(Entity):
                 self.omega_x = X - self.rotation_x
                 self.omega_y = Y - self.rotation_y
                 self.omega_z = Z - self.rotation_z
+                """
 
             #Here it is bouncing wildly
             else:
                 self.speed_y = -self.rebound * self.speed_y
 
                 #rotation bounce
-                self.omega_x = 3.5 * self.omega_x * (.5 - rand.random())
-                self.omega_y = 3.5 * self.omega_y * (.5 - rand.random())
-                self.omega_z = 3.5 * self.omega_z * (.5 - rand.random())
+                self.omega_x = impact * self.omega_x * (.5 - rand.random())
+                self.omega_y = impact * self.omega_y * (.5 - rand.random())
+                self.omega_z = impact * self.omega_z * (.5 - rand.random())
 
 
 
@@ -246,6 +278,18 @@ class d4(Entity):
             self.gravity()
             self.bounce()
 
+        elif self.pause:
+            """
+                This stuff was put in to help pause the game and move
+                stuff around to see what is what...
+            """
+            #player input
+            self.rotation_x += held_keys['j'] * time.dt
+            self.rotation_x -= held_keys['l'] * time.dt
+            self.rotation_y += held_keys['i'] * time.dt
+            self.rotation_y -= held_keys['k'] * time.dt
+            self.rotation_z += held_keys['o'] * time.dt
+            self.rotation_z -= held_keys['u'] * time.dt
 
     def input(self, key):
         #roll the die
@@ -255,59 +299,3 @@ class d4(Entity):
         #toggle pause function
         if key == "p":
             self.pause = not self.pause
-
-app = Ursina()
-
-d = d4()
-floor = Entity(model = "plane", position = (0,-4,0), scale = (100,.1,100), color = color.rgb(25,165,25), texture= 'grass', collider = 'mesh')
-Sky()
-print(color.random_color)
-
-#Camera when rolling
-"""
-camera.position = (0,5,-55)
-
-def update():
-    camera.look_at(d)
-
-"""
-
-
-"""
-    Extra testing code
-"""
-verts = ((0,0,0), (1,0,0), (.5, 1, 0), (-.5,1,0))
-tris = (1, 2, 0, 2, 3, 0)
-uvs = ((1.0, 0.0), (0.0, 1.0), (0.0, 0.0), (1.0, 1.0))
-norms = ((0,0,-1),) * len(verts)
-colors = (color.red, color.blue, color.lime, color.black)
-
-
-e = Entity(model=Mesh(vertices=verts, triangles=tris, uvs=uvs, normals=norms, colors=colors), scale=2)
-verts = (Vec3(0,0,0), Vec3(0,1,0), Vec3(1,1,0), Vec3(2,2,0), Vec3(0,3,0), Vec3(-2,3,0))
-tris = ((0,1), (3,4,5))
-
-lines = Entity(model=Mesh(vertices=verts, triangles=tris, mode='line', thickness=4), color=color.cyan, z=-1)
-points = Entity(model=Mesh(vertices=verts, mode='point', thickness=.05), color=color.red, z=-1.01)
-
-
-"""
-    testing code end
-"""
-
-player = FirstPersonController(y=1, enabled=True)
-
-ec = EditorCamera()
-ec.enabled = False
-rotation_info = Text(position=window.top_left)
-
-def update():
-    rotation_info.text = str(int(ec.rotation_y)) + '\n' + str(int(ec.rotation_x))
-
-
-def input(key):
-    if key == 'tab':    # press tab to toggle edit/play mode
-        ec.enabled = not ec.enabled
-        player.enabled = not player.enabled
-
-app.run()
