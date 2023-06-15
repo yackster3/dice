@@ -310,5 +310,6 @@ def NearestAngle(cur, angles, modulus = 360):
         print("next: " + str(next))
         if sum(next) < val:
             near = ang
+            val = sum(next)
 
     return near
