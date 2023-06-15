@@ -10,4 +10,8 @@ anglesList = [[135, 135, 135],
 origin = [0,0,0]
 
 
-NearestAngle()
+def Test_NearestAngle()
+    if [135,135,135] == NearestAngle(origin, anglesList):
+        print("Test 1: Success")
+    else:
+        print("Test 1: Failure")

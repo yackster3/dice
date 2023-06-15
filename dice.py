@@ -213,10 +213,11 @@ class d4(Entity):
                 cur = np.array([self.rotation_x, self.rotation_y, self.rotation_z])
 
                 #possible landing positions
-                f1 = np.array([315, 315, 315])
-                f2 = np.array([315, 45, 45])
-                f3 = np.array([45, 315, 45])
-                f4 = np.array([45, 45, 315])
+                #decent
+                f1 = np.array([30, 0, 45])
+                f2 = np.array([155, 0, 45])
+                f3 = np.array([210, 0, 135])
+                f4 = np.array([330, 0, 135])
 
                 angles = [f1,f2,f3,f4]
 
@@ -225,7 +226,6 @@ class d4(Entity):
                 self.omega_x = settle[0] - self.rotation_x
                 self.omega_y = settle[1] - self.rotation_y
                 self.omega_z = settle[2] - self.rotation_z
-
 
                 print("target: " + str(settle))
                 print("currrent: " + str(cur))
@@ -274,7 +274,37 @@ class d4(Entity):
         #toggle pause function
         if key == "p":
             self.pause = not self.pause
+        if key == "0":
+            self.rotation_x = 0
+            self.rotation_y = 0
+            self.rotation_z = 0
 
+        if key == "1":
+            self.rotation_x = 315
+            self.rotation_z = 315
+
+        if key == "2":
+            self.rotation_x = 225
+            self.rotation_y = 225
+
+        if key == "3":
+            self.rotation_x = 45
+            self.rotation_y = 135
+
+        if key == "4":
+            self.rotation_x = 315
+            self.rotation_y = 225
+
+        if key == "x":
+            self.rotation_x += 15
+
+        if key == "y":
+            self.rotation_y += 15
+
+        if key == "z":
+            self.rotation_z += 15
+        if key == "m":
+            print(str((self.rotation_x,self.rotation_y,self.rotation_z)))
 """
     inputs: single vector of angles as cur, list of vectors of angles as angles
 
@@ -282,7 +312,7 @@ class d4(Entity):
     This finds the nearest angle in cyclic algebras of modulus 360
 
 """
-def NearestAngle(cur, angles, modulus = 360):
+def NearestAngle(cur, angles, modulus = [360,360,360]):
 
     #Max value possible in function
     val = 3*180**2
@@ -298,8 +328,8 @@ def NearestAngle(cur, angles, modulus = 360):
         for i in range(0, len(cur)):
 
             #Appends the smallest value to each component
-            alpha = ((cur[i] - ang[i]) % modulus)
-            beta = ((cur[i] - ang[i]) % modulus - modulus)
+            alpha = ((cur[i] - ang[i]) % modulus[i])
+            beta = ((cur[i] - ang[i]) % modulus[i] - modulus[i])
 
             print("Alpha: " + str(alpha))
             print("Beta: " + str(beta))
