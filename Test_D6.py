@@ -5,25 +5,20 @@ import dice
 
 
 
+"""
+    This sequence just creates a d6 Die that allows you to roll it.
+"""
+
 app = Ursina()
 
-d = dice.d4()
+d = dice.d6()
 
 #myGrid = Entity(model = Grid(3,5), color = color.rgb(255,0,0))
 
 
 floor = Entity(model = "plane", position = (0,-4,0), scale = (100,.1,100), color = color.rgb(25,165,25), texture= 'grass', collider = 'mesh')
 Sky()
-print(color.random_color)
 
-#Camera when rolling
-"""
-camera.position = (0,5,-55)
-
-def update():
-    camera.look_at(d)
-
-"""
 
 player = FirstPersonController(y=1, enabled=True)
 

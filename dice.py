@@ -102,9 +102,9 @@ class d6(Entity):
                 self.speed_y = -self.rebound * self.speed_y
 
                 #rotation bounce
-                self.omega_x = 3.5 * self.omega_x * (.5 - rand.random())
-                self.omega_y = 3.5 * self.omega_y * (.5 - rand.random())
-                self.omega_z = 3.5 * self.omega_z * (.5 - rand.random())
+                self.omega_x = 3 * self.omega_x * (.5 - rand.random())
+                self.omega_y = 3 * self.omega_y * (.5 - rand.random())
+                self.omega_z = 3 * self.omega_z * (.5 - rand.random())
 
 
 
@@ -123,7 +123,7 @@ class d6(Entity):
 
     def input(self, key):
         #roll the die
-        if key == "space":
+        if key == "r":
             self.roll()
 
         #toggle pause function
@@ -133,7 +133,7 @@ class d4(Entity):
     def __init__(self, **kwargs):
         super().__init__(self, **kwargs)
         #Build the d4 shape
-        self.verts = ((1,1,1), (1,-1,-1), (-1,1,-1), (-1,-1,1))
+        self.verts = ((1,1,1), (-1,1,-1), (1,-1,-1), (-1,-1,1))
         self.tris = (0, 1, 2, 1, 2, 3, 0, 2, 3, 0, 1, 3,
                         3, 1, 0, 3, 2, 0, 3, 2, 1, 2, 1, 3,
                         1, 3, 2, 2, 3, 1, 1, 0, 2, 2, 0, 3)
@@ -214,9 +214,9 @@ class d4(Entity):
 
                 #possible landing positions
                 #decent
-                f1 = np.array([30, 0, 45])
+                f1 = np.array([35.26, 7, 42.26])
                 f2 = np.array([155, 0, 45])
-                f3 = np.array([210, 0, 135])
+                f3 = np.array([215.26, 187, 222.26])
                 f4 = np.array([330, 0, 135])
 
                 angles = [f1,f2,f3,f4]
@@ -280,23 +280,34 @@ class d4(Entity):
             self.rotation_z = 0
 
         if key == "1":
-            self.rotation_x = 315
-            self.rotation_z = 315
+            self.rotation_x = 28.5869
+            self.rotation_z = 28.5869
 
         if key == "2":
-            self.rotation_x = 225
-            self.rotation_y = 225
+            self.rotation_x = 61.4131
+            self.rotation_y = 61.4131
 
+#       f3 = np.array([215.26, 187, 222.26])
         if key == "3":
-            self.rotation_x = 45
-            self.rotation_y = 135
+            self.rotation_x = 139.240
+            self.rotation_z = 139.240
 
         if key == "4":
-            self.rotation_x = 315
-            self.rotation_y = 225
+            self.rotation_x = 40.7598
+            self.rotation_y = 40.7598
 
         if key == "x":
             self.rotation_x += 15
+
+        if key == "g":
+            self.rotation_x += 1
+            self.rotation_z += 1
+        if key == "h":
+            self.rotation_y += 1
+            self.rotation_z += 1
+        if key == "j":
+            self.rotation_y += 1
+            self.rotation_x += 1
 
         if key == "y":
             self.rotation_y += 15
