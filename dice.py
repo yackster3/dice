@@ -133,7 +133,7 @@ class d4(Entity):
     def __init__(self, **kwargs):
         super().__init__(self, **kwargs)
         #Build the d4 shape
-        self.verts = ((1,1,1), (-1,1,-1), (1,-1,-1), (-1,-1,1))
+        self.verts = ((1,1,1), (-1,1,-1), (-1,-1,1), (1,-1,-1))
         self.tris = (0, 1, 2, 1, 2, 3, 0, 2, 3, 0, 1, 3,
                         3, 1, 0, 3, 2, 0, 3, 2, 1, 2, 1, 3,
                         1, 3, 2, 2, 3, 1, 1, 0, 2, 2, 0, 3)
@@ -326,8 +326,9 @@ class d4(Entity):
 def NearestAngle(cur, angles, modulus = [360,360,360]):
 
     #Max value possible in function
-    val = 3*180**2
-
+    #val = 3*180**2
+    #Min value possible in function
+    val = 0
     #near array is empty
     near = []
     for ang in angles:
@@ -342,15 +343,16 @@ def NearestAngle(cur, angles, modulus = [360,360,360]):
             alpha = ((cur[i] - ang[i]) % modulus[i])
             beta = ((cur[i] - ang[i]) % modulus[i] - modulus[i])
 
-            print("Alpha: " + str(alpha))
-            print("Beta: " + str(beta))
+            print("Alpha: " + str(alpha**2))
+            print("Beta: " + str(beta**2))
 
-            next.append(min(alpha**2, beta**2))
+            next.append(max(alpha**2, beta**2))
 
         #Check if the currrently examined angle is nearer or further.
         print("next: " + str(next))
-        if sum(next) < val:
+        if sum(next) > val:
             near = ang
             val = sum(next)
+        print("Val: " + str(val))
 
     return near
